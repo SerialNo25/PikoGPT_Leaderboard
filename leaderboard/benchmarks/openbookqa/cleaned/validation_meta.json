@@ -1,0 +1,13 @@
+{
+  "benchmark": "openbookqa",
+  "split": "validation",
+  "hf_dataset": "allenai/openbookqa",
+  "hf_config": "main",
+  "hf_split": "validation",
+  "rows_in_split": 500,
+  "written": 500,
+  "skipped": 0,
+  "output_file": "/Users/Lorena/Developer/PikoGPT/benchmarks/openbookqa/cleaned/validation.jsonl",
+  "schema": "CleanMCExample",
+  "note": "OpenBookQA is 4-way multiple choice; model is expected to output A/B/C/D."
+}

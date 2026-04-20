@@ -1,0 +1,12 @@
+{
+  "benchmark": "hellaswag",
+  "split": "validation",
+  "hf_dataset": "Rowan/hellaswag",
+  "hf_split": "validation",
+  "rows_in_split": 10042,
+  "written": 10042,
+  "skipped": 0,
+  "output_file": "benchmarks/hellaswag/cleaned/validation.jsonl",
+  "schema": "CleanMCExample",
+  "note": "HellaSwag test labels are hidden; validation split is used for local benchmarking."
+}

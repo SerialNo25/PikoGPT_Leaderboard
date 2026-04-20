@@ -1,0 +1,13 @@
+{
+  "benchmark": "winogrande",
+  "split": "validation",
+  "hf_dataset": "allenai/winogrande",
+  "hf_config": "winogrande_xl",
+  "hf_split": "validation",
+  "rows_in_split": 1267,
+  "written": 1267,
+  "skipped": 0,
+  "output_file": "/Users/Lorena/Developer/PikoGPT/benchmarks/winogrande/cleaned/validation.jsonl",
+  "schema": "CleanMCExample",
+  "note": "Winogrande is binary multiple choice; model is expected to output A or B."
+}

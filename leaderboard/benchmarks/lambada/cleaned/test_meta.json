@@ -1,0 +1,13 @@
+{
+  "benchmark": "lambada",
+  "split": "test",
+  "hf_dataset": "EleutherAI/lambada_openai",
+  "hf_config": "en",
+  "hf_split": "test",
+  "rows_in_split": 5153,
+  "written": 5153,
+  "skipped": 0,
+  "output_file": "/Users/Lorena/Developer/PikoGPT/benchmarks/lambada/cleaned/test.jsonl",
+  "schema": "CleanNextWordExample",
+  "note": "Prompt is the passage WITHOUT the last word, plus a trailing space. Gold is the last word (answer_text)."
+}
