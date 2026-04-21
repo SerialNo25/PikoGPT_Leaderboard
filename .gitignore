@@ -1,6 +1,6 @@
 .venv
 
-DS_Store
+.DS_Store
 
 # Hidden benchmarks
 leaderboard/benchmarks_hidden
