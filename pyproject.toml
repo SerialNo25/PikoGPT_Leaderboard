@@ -18,6 +18,5 @@ dependencies = [
     "psutil>=5.9.0",
     "torch>=2.0.0",
     "torchinfo>=1.8.0",
-    "nvitop>=1.6.2",
 ]
 
