@@ -16,15 +16,19 @@ from pathlib import Path
 from types import SimpleNamespace
 
 HERE = Path(__file__).resolve().parent
-# Walk up to the PegasusGPT repo root by detecting the project's domain package.
-# Robust whether this submission lives at <repo>/PikoGPT_Leaderboard/Submissions/<x>
-# or one level deeper under slides/.
-PROJECT_ROOT = next(
-    (p for p in HERE.parents if (p / "domain" / "inference" / "inference_service.py").is_file()),
-    HERE.parents[2],
+# Add the project source root for imports like `from domain...`.
+# The leaderboard submission is self-contained under `src/`, while the original
+# project layout may have `domain/` directly under an ancestor directory.
+SOURCE_ROOT = next(
+    (
+        p
+        for p in (HERE / "src", HERE, *HERE.parents)
+        if (p / "domain" / "inference" / "inference_service.py").is_file()
+    ),
+    HERE / "src",
 )
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+if str(SOURCE_ROOT) not in sys.path:
+    sys.path.insert(0, str(SOURCE_ROOT))
 
 
 # Fallback model hyperparameters used only if the checkpoint does not embed a

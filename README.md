@@ -46,8 +46,8 @@ Run all public benchmarks:
 
 ```bash
 uv run python -m leaderboard.run_benchmarks \
-  --submission MyTeam \
-  --checkpoint runs/my_checkpoint.pt \
+  --submission PegasusGPT \
+  --checkpoint runs/pg_dpo_uf_best_checkpoint.pt \
   --limit 100
 ```
 
@@ -55,8 +55,8 @@ Run selected benchmarks only:
 
 ```bash
 uv run python -m leaderboard.run_benchmarks \
-  --submission MyTeam \
-  --checkpoint runs/my_checkpoint.pt \
+  --submission PegasusGPT \
+  --checkpoint runs/pg_dpo_uf_best_checkpoint.pt \
   --bench hellaswag winogrande \
   --limit 50
 ```
@@ -65,8 +65,8 @@ Debug run (per-example logs):
 
 ```bash
 uv run python -m leaderboard.run_benchmarks \
-  --submission MyTeam \
-  --checkpoint runs/my_checkpoint.pt \
+  --submission PegasusGPT \
+  --checkpoint runs/pg_dpo_uf_best_checkpoint.pt \
   --bench hellaswag \
   --limit 3 \
   --verbose
