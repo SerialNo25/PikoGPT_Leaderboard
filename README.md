@@ -5,6 +5,10 @@ This repository contains the public benchmark runner used to evaluate your submi
 The benchmark data is already preprocessed and included in this repo.
 You do **not** need to run preprocessing.
 
+## PegasusGPT Checkpoints:
+Checkpoints files can be downloaded under the following links and should be placed under `Submissions/PegasusGPT/runs`
+1. DPO UF: https://drive.google.com/file/d/1l0HL1fwmp4V4JknpG9U-mE5LzFRAHDAG/view?usp=share_link
+
 ## What You Need to Provide
 
 Create one folder per submission under `Submissions/`, for example:
