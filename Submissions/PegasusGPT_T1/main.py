@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Leaderboard adapter for PegasusGPT.
+"""Leaderboard adapter for PegasusGPT_T1.
 
 Implements the CLI signature expected by leaderboard/run_benchmarks.py and
 delegates inference to the project's GPTInferenceService. In --leaderboard
@@ -88,7 +88,7 @@ def _resolve_device(name: str) -> str:
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="PegasusGPT leaderboard adapter")
+    p = argparse.ArgumentParser(description="PegasusGPT_T1 leaderboard adapter")
     p.add_argument("--stage", default="inference")
     p.add_argument("--checkpoint", required=True)
     p.add_argument("--prompt", required=True)

@@ -6,8 +6,18 @@ The benchmark data is already preprocessed and included in this repo.
 You do **not** need to run preprocessing.
 
 ## PegasusGPT Checkpoints:
-Checkpoints files can be downloaded under the following links and should be placed under `Submissions/PegasusGPT/runs`
+Checkpoints files can be downloaded under the following links and should be placed under `Submissions/PegasusGPT_T1/runs`
 1. DPO UF: https://drive.google.com/file/d/1l0HL1fwmp4V4JknpG9U-mE5LzFRAHDAG/view?usp=share_link
+
+## Local Leaderboard Run
+The leaderboard was run locally with cutoff 500 using:
+```bash
+uv run python -m leaderboard.run_benchmarks \
+  --submission PegasusGPT_T1 \
+  --checkpoint runs/pg_dpo_uf_best_checkpoint.pt \
+  --limit 500
+```
+
 
 ## What You Need to Provide
 
@@ -50,7 +60,7 @@ Run all public benchmarks:
 
 ```bash
 uv run python -m leaderboard.run_benchmarks \
-  --submission PegasusGPT \
+  --submission PegasusGPT_T1 \
   --checkpoint runs/pg_dpo_uf_best_checkpoint.pt \
   --limit 100
 ```
@@ -59,7 +69,7 @@ Run selected benchmarks only:
 
 ```bash
 uv run python -m leaderboard.run_benchmarks \
-  --submission PegasusGPT \
+  --submission PegasusGPT_T1 \
   --checkpoint runs/pg_dpo_uf_best_checkpoint.pt \
   --bench hellaswag winogrande \
   --limit 50
@@ -69,7 +79,7 @@ Debug run (per-example logs):
 
 ```bash
 uv run python -m leaderboard.run_benchmarks \
-  --submission PegasusGPT \
+  --submission PegasusGPT_T1 \
   --checkpoint runs/pg_dpo_uf_best_checkpoint.pt \
   --bench hellaswag \
   --limit 3 \
