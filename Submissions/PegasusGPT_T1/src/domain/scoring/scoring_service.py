@@ -105,7 +105,7 @@ class MultipleChoiceScoringService:
         scores: tuple[ChoiceScore, ...],
         scorer: MultipleChoiceScorer,
     ) -> ChoiceScore:
-        if normalized.benchmark == "openbookqa":
+        if normalized.benchmark in {"openbookqa", "winogrande"}:
             calibrated_scores: list[tuple[float, ChoiceScore]] = []
             for candidate, score in zip(normalized.candidates, scores):
                 if candidate.calibration_prefix is None:

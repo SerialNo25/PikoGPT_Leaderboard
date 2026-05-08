@@ -10,7 +10,7 @@ _CHOICE_RE = re.compile(r"^([A-D])\)\s*(.+?)\s*$")
 
 class HellaSwagAdapter:
     name = "hellaswag"
-    scoring_pre_prompt = "" # build_prompt("Continue.","")
+    scoring_pre_prompt = ""
 
     def detect(self, prompt: str) -> bool:
         try:

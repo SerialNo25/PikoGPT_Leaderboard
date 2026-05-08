@@ -9,13 +9,15 @@ _CHOICE_RE = re.compile(r"^([A-B])\)\s*(.+?)\s*$")
 
 class WinoGrandeAdapter:
     """WinoGrande coreference: substitute each option into the blank
-    and score the post-blank tail.
+    and score the post-blank tail with paired bias calibration.
 
     Per Lecture 10 slide 25: 'Lowest-PPL trick on both completed sentences,
     pick the lower one.' Substitution scoring isolates the anaphora-resolution
     signal (Sakaguchi et al. 2020) by factoring out the option's surface
     likelihood: only the post-blank tail is scored, conditioned on the head
-    with the option spliced in.
+    with the option spliced in. Calibration subtracts the same tail likelihood
+    conditioned only on the candidate, which dampens option-specific priors
+    while preserving the paired comparison within each example.
     """
 
     name = "winogrande"
@@ -77,6 +79,8 @@ class WinoGrandeAdapter:
                     text=option_text,
                     scoring_prefix=substituted_head,
                     scoring_continuation=tail,
+                    calibration_prefix=option_text,
+                    calibration_continuation=tail,
                 )
             )
 
