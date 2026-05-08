@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from domain.scoring.base import ChoiceCandidate, NormalizedMultipleChoicePrompt
-from domain.sft.chat_template import build_prompt
+
 
 _CHOICE_RE = re.compile(r"^([A-D])\)\s*(.+?)\s*$")
 
@@ -39,7 +39,6 @@ class OpenBookQAAdapter:
 
         if first_choice_idx is None:
             raise ValueError("OpenBookQA prompt has no choices")
-
         expected_letters = ["A", "B", "C", "D"]
         if [letter for letter, _ in choices] != expected_letters:
             raise ValueError("OpenBookQA prompt choices must be A-D")
@@ -49,12 +48,16 @@ class OpenBookQAAdapter:
         if not question:
             raise ValueError("OpenBookQA prompt has empty question")
 
+        answer_prompt = "\n".join(lines[: answer_idx + 1]).strip()
+
         candidates = tuple(
             ChoiceCandidate(
                 letter=letter,
                 text=text,
-                scoring_prefix=question,
+                scoring_prefix=answer_prompt,
                 scoring_continuation=f" {text}",
+                calibration_prefix="Answer:",
+                calibration_continuation=f" {text}",
             )
             for letter, text in choices
         )

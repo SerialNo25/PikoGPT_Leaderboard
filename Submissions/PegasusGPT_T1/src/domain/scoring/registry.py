@@ -23,6 +23,6 @@ class BenchmarkRegistry:
 def default_registry() -> BenchmarkRegistry:
     registry = BenchmarkRegistry()
     registry.register(HellaSwagAdapter())
-    # registry.register(OpenBookQAAdapter())
+    registry.register(OpenBookQAAdapter())
     registry.register(WinoGrandeAdapter())
     return registry

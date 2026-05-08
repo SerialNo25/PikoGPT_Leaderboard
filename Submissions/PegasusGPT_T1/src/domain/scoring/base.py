@@ -10,6 +10,8 @@ class ChoiceCandidate:
     text: str
     scoring_prefix: str
     scoring_continuation: str
+    calibration_prefix: str | None = None
+    calibration_continuation: str | None = None
 
 
 @dataclass(frozen=True)

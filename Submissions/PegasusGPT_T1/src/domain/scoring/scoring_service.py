@@ -6,7 +6,7 @@ import torch
 from transformers import GPT2TokenizerFast
 
 from domain.inference.inference_service import GPTInferenceService
-from domain.scoring.base import NormalizedMultipleChoicePrompt, build_scored_text
+from domain.scoring.base import ChoiceCandidate, NormalizedMultipleChoicePrompt, build_scored_text
 from domain.scoring.multiple_choice_scorer import ChoiceScore, MultipleChoiceScorer
 from domain.scoring.registry import BenchmarkRegistry, default_registry
 
@@ -83,13 +83,53 @@ class MultipleChoiceScoringService:
                     )
                     for candidate in normalized.candidates
                 )
+                best = self._best_score(
+                    normalized=normalized,
+                    scores=scores,
+                    scorer=scorer,
+                )
         finally:
             if was_training:
                 model.train()
 
-        best = max(scores, key=lambda score: score.log_likelihood)
         return MultipleChoiceScoringResult(
             benchmark=normalized.benchmark,
             reply=best.letter,
             scores=scores,
         )
+
+    def _best_score(
+        self,
+        *,
+        normalized: NormalizedMultipleChoicePrompt,
+        scores: tuple[ChoiceScore, ...],
+        scorer: MultipleChoiceScorer,
+    ) -> ChoiceScore:
+        if normalized.benchmark == "openbookqa":
+            calibrated_scores: list[tuple[float, ChoiceScore]] = []
+            for candidate, score in zip(normalized.candidates, scores):
+                if candidate.calibration_prefix is None:
+                    calibrated_scores.append((score.log_likelihood / score.token_count, score))
+                    continue
+
+                calibration = scorer.score(
+                    ChoiceCandidate(
+                        letter=candidate.letter,
+                        text=candidate.text,
+                        scoring_prefix=candidate.calibration_prefix,
+                        scoring_continuation=(
+                            candidate.calibration_continuation
+                            if candidate.calibration_continuation is not None
+                            else candidate.scoring_continuation
+                        ),
+                    )
+                )
+                calibrated_scores.append(
+                    (
+                        score.log_likelihood / score.token_count
+                        - calibration.log_likelihood / calibration.token_count,
+                        score,
+                    )
+                )
+            return max(calibrated_scores, key=lambda item: item[0])[1]
+        return max(scores, key=lambda score: score.log_likelihood)
