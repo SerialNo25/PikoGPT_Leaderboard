@@ -10,7 +10,7 @@ _CHOICE_RE = re.compile(r"^([A-D])\)\s*(.+?)\s*$")
 
 class OpenBookQAAdapter:
     name = "openbookqa"
-    scoring_pre_prompt = ""
+    scoring_pre_prompt = "Choose the scientifically correct answer.\n\n"
 
     def detect(self, prompt: str) -> bool:
         try:
