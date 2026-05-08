@@ -8,6 +8,7 @@ mode, only the generated continuation is written to stdout.
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import os
 import random
@@ -103,6 +104,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--top-k", dest="top_k", type=int, default=50)
     p.add_argument("--disable-multiple-choice-scoring", action="store_true")
+    p.add_argument("--return-scored-text", action="store_true")
     return p.parse_args()
 
 
@@ -128,7 +130,27 @@ def main() -> int:
     if ENABLE_MULTIPLE_CHOICE_SCORING and not args.disable_multiple_choice_scoring:
         from domain.scoring import MultipleChoiceScoringService
 
-        scoring_result = MultipleChoiceScoringService().run(
+        scoring_service = MultipleChoiceScoringService()
+        if args.return_scored_text:
+            scored_texts = scoring_service.scored_texts_for_prompt(prompt)
+            if scored_texts is not None:
+                benchmark, choices = scored_texts
+                sys.stdout.write(
+                    json.dumps(
+                        {
+                            "benchmark": benchmark,
+                            "choices": [
+                                {"letter": letter, "scored_text": scored_text}
+                                for letter, scored_text in choices
+                            ],
+                        },
+                        ensure_ascii=False,
+                    )
+                )
+                sys.stdout.flush()
+                return 0
+
+        scoring_result = scoring_service.run(
             checkpoint_path=str(checkpoint_path),
             model_config=model_config,
             input_text=prompt,

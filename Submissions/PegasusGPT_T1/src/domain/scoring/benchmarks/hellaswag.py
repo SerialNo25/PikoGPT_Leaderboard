@@ -3,13 +3,14 @@ from __future__ import annotations
 import re
 
 from domain.scoring.base import ChoiceCandidate, NormalizedMultipleChoicePrompt
-
+from domain.sft.chat_template import build_prompt
 
 _CHOICE_RE = re.compile(r"^([A-D])\)\s*(.+?)\s*$")
 
 
 class HellaSwagAdapter:
     name = "hellaswag"
+    scoring_pre_prompt = "" # build_prompt("Continue.","")
 
     def detect(self, prompt: str) -> bool:
         try:
@@ -61,6 +62,7 @@ class HellaSwagAdapter:
             benchmark=self.name,
             original_prompt=prompt,
             candidates=candidates,
+            scoring_pre_prompt=self.scoring_pre_prompt,
         )
 
     def _find_answer_line(self, lines: list[str]) -> int:

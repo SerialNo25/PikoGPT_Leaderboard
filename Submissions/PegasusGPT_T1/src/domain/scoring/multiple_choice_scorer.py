@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from torch import nn
 from transformers import GPT2TokenizerFast
 
-from domain.scoring.base import ChoiceCandidate
+from domain.scoring.base import ChoiceCandidate, build_scored_text, prepend_to_prompt
 
 
 @dataclass(frozen=True)
@@ -32,8 +32,9 @@ class MultipleChoiceScorer:
         self.device = torch.device(device_name)
         self.max_position_embeddings = max_position_embeddings
 
-    def score(self, candidate: ChoiceCandidate) -> ChoiceScore:
-        prefix_ids = self.tokenizer.encode(candidate.scoring_prefix, add_special_tokens=False)
+    def score(self, candidate: ChoiceCandidate, pre_prompt: str = "") -> ChoiceScore:
+        full_prefix = prepend_to_prompt(pre_prompt, candidate.scoring_prefix)
+        prefix_ids = self.tokenizer.encode(full_prefix, add_special_tokens=False)
         continuation_ids = self.tokenizer.encode(candidate.scoring_continuation, add_special_tokens=False)
         if not prefix_ids:
             raise ValueError("scoring prefix does not contain tokenizable content")
@@ -63,7 +64,7 @@ class MultipleChoiceScorer:
 
         return ChoiceScore(
             letter=candidate.letter,
-            text=candidate.text,
+            text=build_scored_text(candidate, pre_prompt),
             log_likelihood=log_likelihood,
             token_count=len(continuation_ids),
         )

@@ -6,7 +6,7 @@ import torch
 from transformers import GPT2TokenizerFast
 
 from domain.inference.inference_service import GPTInferenceService
-from domain.scoring.base import NormalizedMultipleChoicePrompt
+from domain.scoring.base import NormalizedMultipleChoicePrompt, build_scored_text
 from domain.scoring.multiple_choice_scorer import ChoiceScore, MultipleChoiceScorer
 from domain.scoring.registry import BenchmarkRegistry, default_registry
 
@@ -27,6 +27,21 @@ class MultipleChoiceScoringService:
         if adapter is None:
             return None
         return adapter.normalize(prompt)
+
+    def scored_texts_for_prompt(self, prompt: str) -> tuple[str, tuple[tuple[str, str], ...]] | None:
+        normalized = self.detect_and_normalize(prompt)
+        if normalized is None:
+            return None
+        return (
+            normalized.benchmark,
+            tuple(
+                (
+                    candidate.letter,
+                    build_scored_text(candidate, normalized.scoring_pre_prompt),
+                )
+                for candidate in normalized.candidates
+            ),
+        )
 
     def run(
         self,
@@ -61,7 +76,13 @@ class MultipleChoiceScoringService:
 
         try:
             with torch.no_grad():
-                scores = tuple(scorer.score(candidate) for candidate in normalized.candidates)
+                scores = tuple(
+                    scorer.score(
+                        candidate,
+                        pre_prompt=normalized.scoring_pre_prompt,
+                    )
+                    for candidate in normalized.candidates
+                )
         finally:
             if was_training:
                 model.train()
