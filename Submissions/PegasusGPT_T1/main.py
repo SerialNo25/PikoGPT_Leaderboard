@@ -117,11 +117,12 @@ def main() -> int:
     if not checkpoint_path.is_absolute():
         checkpoint_path = (Path.cwd() / checkpoint_path).resolve()
 
+    prompt = args.prompt.rstrip()
     service = GPTInferenceService()
     result = service.run(
         checkpoint_path=str(checkpoint_path),
         model_config=SimpleNamespace(**DEFAULT_MODEL_CONFIG),
-        input_text=args.prompt,
+        input_text=prompt,
         max_new_tokens=args.max_tokens,
         device_name=_resolve_device(args.device),
         vocab_size=DEFAULT_MODEL_CONFIG["vocab_size"],
