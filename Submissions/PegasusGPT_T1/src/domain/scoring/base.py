@@ -32,10 +32,9 @@ class BenchmarkAdapter(Protocol):
 
 
 def prepend_to_prompt(pre_prompt: str, scoring_prefix: str) -> str:
-    pre_prompt = pre_prompt.strip()
-    if not pre_prompt:
+    if not pre_prompt.strip():
         return scoring_prefix
-    return f"{pre_prompt}\n\n{scoring_prefix}"
+    return f"{pre_prompt}{scoring_prefix}"
 
 
 def build_scored_text(candidate: ChoiceCandidate, pre_prompt: str = "") -> str:
