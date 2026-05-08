@@ -3,12 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import torch
-from transformers import GPT2TokenizerFast
 
 from domain.inference.inference_service import GPTInferenceService
 from domain.scoring.base import ChoiceCandidate, NormalizedMultipleChoicePrompt, build_scored_text
 from domain.scoring.multiple_choice_scorer import ChoiceScore, MultipleChoiceScorer
 from domain.scoring.registry import BenchmarkRegistry, default_registry
+from domain.tokenization import load_gpt2_tokenizer
 
 
 @dataclass(frozen=True)
@@ -66,7 +66,7 @@ class MultipleChoiceScoringService:
         model.to(device_name)
         was_training = model.training
         model.eval()
-        tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+        tokenizer = load_gpt2_tokenizer()
         scorer = MultipleChoiceScorer(
             model=model,
             tokenizer=tokenizer,

@@ -115,8 +115,6 @@ def main() -> int:
     _silence_third_party_logging()
     _seed_all(args.seed)
 
-    from transformers import GPT2TokenizerFast
-
     checkpoint_path = Path(args.checkpoint)
     if not checkpoint_path.is_absolute():
         checkpoint_path = (Path.cwd() / checkpoint_path).resolve()
@@ -176,7 +174,9 @@ def main() -> int:
         top_k=args.top_k,
     )
 
-    tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+    from domain.tokenization import load_gpt2_tokenizer
+
+    tokenizer = load_gpt2_tokenizer()
     continuation_ids = result.generated_token_ids[len(result.input_token_ids):]
     continuation = tokenizer.decode(continuation_ids)
 

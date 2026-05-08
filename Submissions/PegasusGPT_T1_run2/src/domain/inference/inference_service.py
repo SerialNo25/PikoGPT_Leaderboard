@@ -5,8 +5,8 @@ from typing import Any
 
 import torch
 from torch import nn
-from transformers import GPT2TokenizerFast
 
+from domain.tokenization import load_gpt2_tokenizer
 from domain.model.model_factory import build_model_from_config
 
 
@@ -108,7 +108,7 @@ class GPTInferenceService:
         temperature: float = 0.8,
         top_k: int = 50,
     ) -> InferenceResult:
-        tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+        tokenizer = load_gpt2_tokenizer()
         input_token_ids = tokenizer.encode(input_text, add_special_tokens=False)
 
         if len(input_token_ids) == 0:
