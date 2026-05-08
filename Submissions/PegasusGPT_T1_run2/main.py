@@ -17,9 +17,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 HERE = Path(__file__).resolve().parent
-# Add the project source root for imports like `from domain...`.
-# The leaderboard submission is self-contained under `src/`, while the original
-# project layout may have `domain/` directly under an ancestor directory.
+
 SOURCE_ROOT = next(
     (
         p
@@ -131,6 +129,7 @@ def main() -> int:
         from domain.scoring import MultipleChoiceScoringService
 
         scoring_service = MultipleChoiceScoringService()
+        # ----- Debug Tool -----
         if args.return_scored_text:
             scored_texts = scoring_service.scored_texts_for_prompt(prompt)
             if scored_texts is not None:
@@ -149,6 +148,7 @@ def main() -> int:
                 )
                 sys.stdout.flush()
                 return 0
+        # ----- End Debug -----
 
         scoring_result = scoring_service.run(
             checkpoint_path=str(checkpoint_path),
