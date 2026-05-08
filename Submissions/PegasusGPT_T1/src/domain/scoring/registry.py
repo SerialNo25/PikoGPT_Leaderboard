@@ -3,6 +3,7 @@ from __future__ import annotations
 from domain.scoring.base import BenchmarkAdapter
 from domain.scoring.benchmarks.hellaswag import HellaSwagAdapter
 from domain.scoring.benchmarks.openbookqa import OpenBookQAAdapter
+from domain.scoring.benchmarks.winogrande import WinoGrandeAdapter
 
 
 class BenchmarkRegistry:
@@ -22,5 +23,6 @@ class BenchmarkRegistry:
 def default_registry() -> BenchmarkRegistry:
     registry = BenchmarkRegistry()
     registry.register(HellaSwagAdapter())
-    registry.register(OpenBookQAAdapter())
+    # registry.register(OpenBookQAAdapter())
+    registry.register(WinoGrandeAdapter())
     return registry
