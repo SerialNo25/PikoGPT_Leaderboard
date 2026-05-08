@@ -20,18 +20,13 @@ class InferenceResult:
 class GPTInferenceService:
     """Core inference routine for decoder-only language models."""
 
-    def run(
+    def load_model(
         self,
         checkpoint_path: str,
         model_config,
-        input_text: str,
-        max_new_tokens: int,
-        device_name: str,
         vocab_size: int | None = None,
-        temperature: float = 0.8,
-        top_k: int = 50,
-    ) -> InferenceResult:
-        # Resolve vocab_size: explicit param > model_config.vocab_size > default
+    ) -> tuple[nn.Module, Any]:
+        """Load a checkpoint and return the initialized model and built config."""
         resolved_vocab_size = vocab_size or getattr(model_config, "vocab_size", None) or 50257
 
         checkpoint = torch.load(checkpoint_path, map_location="cpu")
@@ -70,8 +65,25 @@ class GPTInferenceService:
             intermediate_size=resolved_model_settings["intermediate_size"],
             rope_theta=resolved_model_settings["rope_theta"],
         )
-
         model.load_state_dict(state_dict)
+        return model, built_config
+
+    def run(
+        self,
+        checkpoint_path: str,
+        model_config,
+        input_text: str,
+        max_new_tokens: int,
+        device_name: str,
+        vocab_size: int | None = None,
+        temperature: float = 0.8,
+        top_k: int = 50,
+    ) -> InferenceResult:
+        model, built_config = self.load_model(
+            checkpoint_path=checkpoint_path,
+            model_config=model_config,
+            vocab_size=vocab_size,
+        )
         result = self.run_with_model(
             model=model,
             input_text=input_text,

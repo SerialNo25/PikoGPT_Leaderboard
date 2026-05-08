@@ -49,6 +49,10 @@ DEFAULT_MODEL_CONFIG: dict = dict(
     rope_theta=10000.0,
 )
 
+# Default-on for leaderboard runs. Pass --disable-multiple-choice-scoring to
+# force plain generation even when the prompt matches a registered benchmark.
+ENABLE_MULTIPLE_CHOICE_SCORING = True
+
 
 def _silence_third_party_logging() -> None:
     os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
@@ -98,6 +102,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--leaderboard", action="store_true")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--top-k", dest="top_k", type=int, default=50)
+    p.add_argument("--disable-multiple-choice-scoring", action="store_true")
     return p.parse_args()
 
 
@@ -110,7 +115,6 @@ def main() -> int:
     _silence_third_party_logging()
     _seed_all(args.seed)
 
-    from domain.inference.inference_service import GPTInferenceService
     from transformers import GPT2TokenizerFast
 
     checkpoint_path = Path(args.checkpoint)
@@ -118,13 +122,33 @@ def main() -> int:
         checkpoint_path = (Path.cwd() / checkpoint_path).resolve()
 
     prompt = args.prompt.rstrip()
+    model_config = SimpleNamespace(**DEFAULT_MODEL_CONFIG)
+    device_name = _resolve_device(args.device)
+
+    if ENABLE_MULTIPLE_CHOICE_SCORING and not args.disable_multiple_choice_scoring:
+        from domain.scoring import MultipleChoiceScoringService
+
+        scoring_result = MultipleChoiceScoringService().run(
+            checkpoint_path=str(checkpoint_path),
+            model_config=model_config,
+            input_text=prompt,
+            device_name=device_name,
+            vocab_size=DEFAULT_MODEL_CONFIG["vocab_size"],
+        )
+        if scoring_result is not None:
+            sys.stdout.write(scoring_result.reply)
+            sys.stdout.flush()
+            return 0
+
+    from domain.inference.inference_service import GPTInferenceService
+
     service = GPTInferenceService()
     result = service.run(
         checkpoint_path=str(checkpoint_path),
-        model_config=SimpleNamespace(**DEFAULT_MODEL_CONFIG),
+        model_config=model_config,
         input_text=prompt,
         max_new_tokens=args.max_tokens,
-        device_name=_resolve_device(args.device),
+        device_name=device_name,
         vocab_size=DEFAULT_MODEL_CONFIG["vocab_size"],
         temperature=args.temperature,
         top_k=args.top_k,
